@@ -1,0 +1,227 @@
+AES 
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+
+def encrypt_message(key, message):
+    cipher = AES.new(key, AES.MODE_ECB)
+    cipher_text = cipher.encrypt(message)
+    return cipher_text
+
+def decrypt_message(key, cipher_text):
+    cipher = AES.new(key, AES.MODE_ECB)
+    plain_text = cipher.decrypt(cipher_text)
+    return plain_text
+
+# Example usage
+key = get_random_bytes(16)  # Generate a random 128-bit key
+message = b'This is a secret message.'
+
+encrypted_message = encrypt_message(key, message)
+print("Encrypted Message:", encrypted_message)
+
+decrypted_message = decrypt_message(key, encrypted_message)
+print("Decrypted Message:", decrypted_message)
+
+---
+
+DES
+from Crypto.Cipher import DES
+from Crypto.Random import get_random_bytes
+
+def encrypt_message(key, message):
+    cipher = DES.new(key, DES.MODE_ECB)
+    cipher_text = cipher.encrypt(message)
+    return cipher_text
+
+def decrypt_message(key, cipher_text):
+    cipher = DES.new(key, DES.MODE_ECB)
+    plain_text = cipher.decrypt(cipher_text)
+    return plain_text
+
+# Example usage
+key = get_random_bytes(8)  # Generate a random 64-bit key
+message = b'This is a secret message.'
+
+encrypted_message = encrypt_message(key, message)
+print("Encrypted Message:", encrypted_message)
+
+decrypted_message = decrypt_message(key, encrypted_message)
+print("Decrypted Message:", decrypted_message)
+
+---
+
+Transposition Cipher
+#include <iostream>
+#include <string>
+using namespace std;
+
+string encryptMessage(int key, const string& message) {
+    string cipherText = "";
+    for (int col = 0; col < key; col++) {
+        int pointer = col;
+        while (pointer < message.length()) {
+            cipherText += message[pointer];
+            pointer += key;
+        }
+    }
+    return cipherText;
+}
+
+string decryptMessage(int key, const string& message) {
+    int numOfCols = message.length() / key;
+    int numOfRows = key;
+    int numOfShadedBoxes = message.length() % key;
+    string plainText = "";
+    int col = 0, row = 0;
+
+    for (char symbol : message) {
+        plainText += symbol;
+        col++;
+        if (col == numOfCols || (col == numOfCols - 1 && row >= numOfRows - numOfShadedBoxes)) {
+            col = 0;
+            row++;
+        }
+    }
+    return plainText;
+}
+
+int main() {
+    int key = 8;
+    string message = "This is a secret message.";
+
+    string encryptedMessage = encryptMessage(key, message);
+    cout << "Encrypted Message: " << encryptedMessage << endl;
+
+    string decryptedMessage = decryptMessage(key, encryptedMessage);
+    cout << "Decrypted Message: " << decryptedMessage << endl;
+
+    return 0;
+}
+
+----------------------------------------------------------
+
+def encrypt_message(key, message):
+    return ''.join([message[i::key] for i in range(key)])
+
+def decrypt_message(key, message):
+    num_of_cols = len(message) // key
+    num_of_rows = key
+    num_of_shaded_boxes = len(message) % key
+    plain_text = [''] * num_of_cols
+    col = 0
+    row = 0
+
+    for symbol in message:
+        plain_text[col] += symbol
+        col += 1
+        if (col == num_of_cols) or (col == num_of_cols - 1 and row >= num_of_rows - num_of_shaded_boxes):
+            col = 0
+            row += 1
+    return ''.join(plain_text)
+
+# Example usage
+key = 8
+message = "This is a secret message."
+
+encrypted_message = encrypt_message(key, message)
+print("Encrypted Message:", encrypted_message)
+
+decrypted_message = decrypt_message(key, encrypted_message)
+print("Decrypted Message:", decrypted_message)
+
+---
+
+Caesar and Substitution Cipher
+def caesar_encrypt(text, shift):
+    encrypted_text = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = ord('A') if char.isupper() else ord('a')
+            shifted_char = chr((ord(char) - ascii_offset + shift) % 26 + ascii_offset)
+            encrypted_text += shifted_char
+        else:
+            encrypted_text += char
+    return encrypted_text
+
+def caesar_decrypt(text, shift):
+    return caesar_encrypt(text, -shift)
+--
+def substitution_encrypt(text, key):
+    encrypted_text = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = ord('A') if char.isupper() else ord('a')
+            shifted_char = key[ord(char) - ascii_offset]
+            encrypted_text += shifted_char
+        else:
+            encrypted_text += char
+    return encrypted_text
+
+def substitution_decrypt(text, key):
+    decrypted_text = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = ord('A') if char.isupper() else ord('a')
+            index = key.index(char) + ascii_offset
+            decrypted_text += chr(index)
+        else:
+            decrypted_text += char
+    return decrypted_text
+
+----
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+string caesar_encrypt(string text, int shift) {
+    string encrypted_text = "";
+    for (char& c : text) {
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            char shifted_char = ((c - base + shift) % 26) + base;
+            encrypted_text += shifted_char;
+        } else {
+            encrypted_text += c;
+        }
+    }
+    return encrypted_text;
+}
+
+string caesar_decrypt(string text, int shift) {
+    return caesar_encrypt(text, -shift);
+}
+
+--
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+string substitution_encrypt(string text, string key) {
+    string encrypted_text = "";
+    for (char& c : text) {
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            char shifted_char = key[c - base];
+            encrypted_text += shifted_char;
+        } else {
+            encrypted_text += c;
+        }
+    }
+    return encrypted_text;
+}
+
+string substitution_decrypt(string text, string key) {
+    string decrypted_text = "";
+    for (char& c : text) {
+        if (isalpha(c)) {
+            char base = isupper(c) ? 'A' : 'a';
+            size_t index = key.find(c) + base;
+            decrypted_text += static_cast<char>(index);
+        } else {
+            decrypted_text += c;
+        }
+    }
+    return decrypted_text;
+}
